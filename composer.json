@@ -1,6 +1,6 @@
 {
-    "name": "ciniran/timer",
-    "description": "yii timer tool",
+    "name": "ciniran/yii-timer",
+    "description": "yii timer tool Yii时间跟踪工具",
     "type": "yii2-extension",
     "keywords": ["yii2","extension","timer"],
     "require": {
