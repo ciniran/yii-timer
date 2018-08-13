@@ -1,2 +1,7 @@
+
 .idea
 .idea/*
+.idea/modules.xml
+.idea/timer.iml
+.idea/vcs.xml
+.idea/workspace.xml
