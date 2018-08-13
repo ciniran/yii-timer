@@ -1,0 +1,23 @@
+{
+    "name": "ciniran/timer",
+    "description": "yii timer tool",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","timer"],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "xiebo",
+            "email": "4816589@qq.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "ciniran\\timer\\": "src/"
+        }
+    }
+}
