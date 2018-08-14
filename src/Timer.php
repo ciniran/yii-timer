@@ -62,14 +62,14 @@ class Timer extends BaseObject
      */
     private $point;
     /**
-     * @var bool $saveFile 日志是否保存为文件
+     * @var bool $saveLog 日志是否保存为文件
      */
-    public $saveFile = false;
+    public $saveLog = false;
     /**
      * @var string $logFileName 日志文件名
      * 默认在web目录下
      */
-    public $logFileName = 'timer.txt';
+    public $logFileName = null;
 
     /**
      * 开始定位时间点
@@ -77,8 +77,8 @@ class Timer extends BaseObject
     public function start()
     {
         $track = debug_backtrace();
-        $this->startClass = $track[0]['file'];
-        $this->startLine = $track[0]['line'];
+        $this->startClass = isset($track[0]['file'])?$track[0]['file']:$track[0]['function'];
+        $this->startLine = isset($track[0]['line'])?$track[0]['line']:$track[0]['class'];
         $this->startTime = microtime(true);
         $this->point = $this->startTime;
     }
@@ -86,18 +86,26 @@ class Timer extends BaseObject
     /**
      * 执行期，监控时间点
      */
-    public function point()
+    public function point($end=false)
     {
         $track = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-        $this->startClass = $track[0]['file'];
-        $this->startLine = $track[0]['line'];
         $this->endTime = microtime(true);
-        $this->endClass = $track[1]['file'];
-        $this->endLine = $track[1]['line'];
+        if (!$end) {
+            $this->endClass =  isset($track[0]['file'])?$track[0]['file']:$track[0]['function'];
+            $this->endLine = isset($track[0]['line'])?$track[0]['line']:$track[0]['class'];
+        }else{
+            $this->endClass =  isset($track[1]['file'])?$track[1]['file']:$track[1]['function'];
+            $this->endLine = isset($track[1]['line'])?$track[1]['line']:$track[1]['class'];
+        }
+
         $this->useTime = round(($this->endTime - $this->point) * 1000, 3);
         $this->allTime = round(($this->endTime - $this->startTime) * 1000, 3);
         $this->addRecord();
-        $this->point = $this->endTime;
+        if (!$end) {
+            $this->point = $this->endTime;
+            $this->startClass = $this->endClass;
+            $this->startLine = $this->endLine;
+        }
     }
 
     /**
@@ -105,9 +113,15 @@ class Timer extends BaseObject
      */
     public function end()
     {
-        $this->point();
-        $this->saveToFile();
-        \Yii::$app->getLog()->getLogger()->log($this->records, Logger::LEVEL_ERROR, 'timer');
+        $this->point(true);
+        if ($this->saveLog) {
+            if ($this->logFileName) {
+                $this->saveToFile();
+            }else{
+                \Yii::$app->getLog()->getLogger()->log($this->records, Logger::LEVEL_ERROR, 'timer');
+            }
+        }
+
     }
 
     private function addRecord()
@@ -151,14 +165,13 @@ class Timer extends BaseObject
 
     private function saveToFile()
     {
-        if (!$this->saveFile) {
-            return;
-        }
-        $logfile = fopen($this->logFileName, 'ab');
+        $str = '';
         foreach ($this->records as $item) {
-            $str = json_encode($item,JSON_UNESCAPED_UNICODE);
-            fwrite($logfile, $str);
+            $str .= json_encode($item,JSON_UNESCAPED_UNICODE);
         }
+        $fileName = \Yii::$app->getRuntimePath() . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . $this->logFileName;
+        $logfile = fopen($fileName, 'ab');
+        fwrite($logfile, $str);
         fclose($logfile);
     }
 
