@@ -3,12 +3,14 @@
 对于自己写出来的代码，感觉执行效率有问题的时候可以用本工具来进行一个辅助分析。
 - 本工具是单例运行，以YII的组件的形式开发，在YII应用实例化完成之后就可以调用运行
 - 本工具默认调用YII的log记录输出时间，也可以配置为文件存储
-- 配置方法如下,(配置到Yii组件 common/config/main-local.php文件中)：
 ### 安装方法
 ````
   composer reqiure ciniran/yii-timer
-  
+
 ````
+### 配置方法
+- 配置方法如下,(配置到Yii组件 common/config/main-local.php文件中)：
+
 ````
 'components'=>[
    'timer'  => [
