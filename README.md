@@ -5,7 +5,7 @@
 - 本工具默认调用YII的log记录输出时间，也可以配置为文件存储
 ### 安装方法
 ````
-  composer reqiure ciniran/yii-timer
+  composer require ciniran/yii-timer
 
 ````
 ### 配置方法
